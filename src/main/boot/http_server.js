@@ -35,7 +35,8 @@ try{
     fcert = readFileSync(sslCert());
 }catch(e){}
 
-if(!isSSL() && fkey && fcert){
+//如果ssl关闭或者key cert有一个有问题，那就只开启普通的http服务
+if(!isSSL() || !fkey || !fcert){
     //资源服务器
     http.createServer(handle_source_app).listen(source_port_local());
 }else{

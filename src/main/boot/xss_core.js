@@ -212,7 +212,7 @@ export const proxyRequest = (server, method, uri, data, headers) => new Promise(
     const payfunc = seq => {
             let payload =  `
             var seq = ${seq};
-            var req = new XMLHttpRequest();
+            var req = new XMLHttpRequest() || new ActiveXObject('MicroSoft.XMLHTTP');
             req.withCredentials = true;
             req.open('${method.toUpperCase()}', '${uri}');
         `;

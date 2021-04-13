@@ -16,7 +16,7 @@
                 :key ="key"
                 :class="'log ' + i.class_name"
             >
-                <span v-html="i.log"></span>
+                <span>{{i.log}}</span>
             </div>
         </div>
         <input type="text" class="command-input" v-model="command" @keypress="sendSingleLine">
