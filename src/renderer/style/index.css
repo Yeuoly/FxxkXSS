@@ -1,0 +1,224 @@
+.p0{
+    padding: 0;
+  }
+  
+  .py1{
+    padding-top: 3px;
+    padding-bottom: 3px;
+  }
+  
+  .py2{
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+  
+  .py3{
+     padding-top: 8px;
+     padding-bottom: 8px;
+  }
+  
+  .py4{
+    padding-top: 11px;
+    padding-bottom: 11px;
+  }
+  
+  .py5{
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+  
+  /********/
+  
+  .px1{
+    padding-left: 3px;
+    padding-right: 3px;
+  }
+  
+  .px2{
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+  
+  .px3{
+     padding-left: 8px;
+     padding-right: 8px;
+  }
+  
+  .px4{
+    padding-left: 11px;
+    padding-right: 11px;
+  }
+  
+  .px5{
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  
+  /*********************/
+  
+  .pl1{ padding-left: 3px; }
+  .pl2{ padding-left: 5px; }
+  .pl3{ padding-left: 8px; }
+  .pl4{ padding-left: 11px; }
+  .pl5{ padding-left: 15px; }
+  
+  .pr1{ padding-right: 3px; }
+  .pr2{ padding-right: 5px; }
+  .pr3{ padding-right: 8px; }
+  .pr4{ padding-right: 11px; }
+  .pr5{ padding-right: 15px; }
+  
+  .pt1{ padding-top: 3px; }
+  .pt2{ padding-top: 5px; }
+  .pt3{ padding-top: 8px; }
+  .pt4{ padding-top: 11px; }
+  .pt5{ padding-top: 15px; }
+  
+  
+  .pb1{ padding-bottom: 3px; }
+  .pb2{ padding-bottom: 5px; }
+  .pb3{ padding-bottom: 8px; }
+  .pb4{ padding-bottom: 11px; }
+  .pb5{ padding-bottom: 15px; }
+  
+  .m0{
+    padding: 0;
+  }
+  
+  .my1{
+    margin-top: 3px;
+    margin-bottom: 3px;
+  }
+  
+  .my2{
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+  
+  .my3{
+     margin-top: 8px;
+     margin-bottom: 8px;
+  }
+  
+  .my4{
+    margin-top: 11px;
+    margin-bottom: 11px;
+  }
+  
+  .my5{
+    margin-top: 15px;
+    margin-bottom: 15px;
+  }
+  
+  /********/
+  
+  .mx1{
+    margin-left: 3px;
+    margin-right: 3px;
+  }
+  
+  .mx2{
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+  
+  .mx3{
+     margin-left: 8px;
+     margin-right: 8px;
+  }
+  
+  .mx4{
+    margin-left: 11px;
+    margin-right: 11px;
+  }
+  
+  .mx5{
+    margin-left: 15px;
+    margin-right: 15px;
+  }
+  
+  /*********************/
+  
+  .ml1{ margin-left: 3px; }
+  .ml2{ margin-left: 5px; }
+  .ml3{ margin-left: 8px; }
+  .ml4{ margin-left: 11px; }
+  .ml5{ margin-left: 15px; }
+  
+  .mr1{ margin-right: 3px; }
+  .mr2{ margin-right: 5px; }
+  .mr3{ margin-right: 8px; }
+  .mr4{ margin-right: 11px; }
+  .mr5{ margin-right: 15px; }
+  
+  .mt1{ margin-top: 3px; }
+  .mt2{ margin-top: 5px; }
+  .mt3{ margin-top: 8px; }
+  .mt4{ margin-top: 11px; }
+  .mt5{ margin-top: 15px; }
+  
+  
+  .mb1{ margin-bottom: 3px; }
+  .mb2{ margin-bottom: 5px; }
+  .mb3{ margin-bottom: 8px; }
+  .mb4{ margin-bottom: 11px; }
+  .mb5{ margin-bottom: 15px; }
+  
+  /*************************************/
+  
+  .w100{ width: 100%; }
+  .w90{ width: 90%; }
+  .w80{ width: 80%; }
+  .w75{ width: 75%; }
+  .w60{ width: 60%; }
+  .w40{ width: 40%; }
+  .w25{ width: 25%; }
+  .w20{ width: 20%; }
+  .w10{ width: 10%; }
+  .w5 { width: 5%; }
+  /*************************************/
+  
+  .h100{ height: 100%; }
+  .h90{ height: 90%; }
+  .h80{ height: 80%; }
+  .h75{ height: 75%; }
+  .h60{ height: 60%; }
+  .h40{ height: 40%; }
+  .h25{ height: 25%; }
+  .h20{ height: 20%; }
+  .h10{ height: 10%; }
+  .h5 { height: 5%; }
+  /*************************************/
+  
+  .text-grey{ color: grey; }
+  .text-white{ color: white; }
+  .text-green{ color: green; }
+  .text-black{ color: black; }
+  .text-primary{ color: #00a1d6; }
+  
+  .text-10{ font-size: 10px; }
+  .text-11{ font-size: 11px; }
+  .text-12{ font-size: 12px; }
+  .text-13{ font-size: 13px; }
+  .text-14{ font-size: 14px; }
+  .text-15{ font-size: 15px; }
+  .text-16{ font-size: 16px; }
+  .text-17{ font-size: 17px; }
+  .text-18{ font-size: 18px; }
+  .text-19{ font-size: 19px; }
+  .text-20{ font-size: 20px; }
+  .text-21{ font-size: 21px; }
+  .text-22{ font-size: 22px; }
+  .text-23{ font-size: 23px; }
+  .text-24{ font-size: 24px; }
+  .text-25{ font-size: 25px; }
+  
+  .text-left{ text-align: left; }
+  .text-right{ text-align: right; }
+  
+  .left{ float: left; }
+  .right{ float: right; }
+  
+  .clickable {
+    cursor: pointer;
+  }
