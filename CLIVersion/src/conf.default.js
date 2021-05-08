@@ -12,6 +12,7 @@ const config = {
     ssl : true,
     ssl_key : '',
     ssl_cert : '',
+    proxy_salt : ''
 };
 
 export const proxy_token = md5(config.proxy_salt + new Date().getTime() + Math.random());
