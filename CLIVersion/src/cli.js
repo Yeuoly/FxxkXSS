@@ -28,7 +28,7 @@ const directives_host = [{
     comment : 'input .session ${id} to start a session console',
     fun(args){
         //args[0] 为id，首先检测存在性
-        if(sockets[args[0]] && sockets[args[0]].getAlive()){
+        if(sockets[args[0]]){
             return new Promise(async resolve => {
                 await startSessionConsole(args[0]);
                 //从session console出来后先清屏再打印控原来的内容
@@ -109,25 +109,27 @@ const startSessionConsole = id => new Promise(async resolve => {
 });
 
 //cli入口
-(async function(){
+(function(){
     console.log('Welcome to FxxkXSS console, this is designed for cli user, wish you enjoy it ~ ');
     console.log('/**\n * Author: Yeuoly\n * Group: Day1\n * Github: https://github.com/Yeuoly\n */');
     console.log('input .help for guide');
 
-    while(true){
-        const command = await getline('');
-        if(command[0] === '.'){
-            for(const i of directives_host){
-                if(i.directive === command.substr(0, i.directive.length)){
-                    try{
-                        await i.fun(command.split(/[ ]/g).slice(1));
-                    }catch(e){
-                        addNewDefaultLog('ERROR', e, 'red');
+    setTimeout(async () => {
+        while(true){
+            const command = await getline('');
+            if(command[0] === '.'){
+                for(const i of directives_host){
+                    if(i.directive === command.substr(0, i.directive.length)){
+                        try{
+                            await i.fun(command.split(/[ ]/g).slice(1));
+                        }catch(e){
+                            addNewDefaultLog('ERROR', e, 'red');
+                        }
                     }
                 }
+            }else{
+                addNewDefaultLog('ERROR', 'Unknown command', 'red');
             }
-        }else{
-            addNewDefaultLog('ERROR', 'Unknown command', 'red');
         }
-    }
+    }, 100);
 })();

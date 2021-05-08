@@ -1,3 +1,5 @@
+import md5 from "md5";
+
 const config = {
     source_domain : '',
     source_port_local : 10092,
@@ -12,11 +14,15 @@ const config = {
     ssl_cert : '',
 };
 
+export const proxy_token = md5(config.proxy_salt + new Date().getTime() + Math.random());
+
 export const exclude_headers = [
     'COOKIE', 'ACCEPT-ENCODING', 'USER-AGENT', 'HOST', 'REFERER', 'ORIGIN', 'CACHE-CONTROL', 'PRAGMA', 'ACCEPT-LANGUAGE',
     'PROXY-CONNECTION', 'SEC-FETCH-DEST', 'SEC-FETCH-MODE', 'SEC-FETCH-SITE', 'ACCEPT', 'UPGRADE-INSECURE-REQUESTS', 'X-XSS-ORIGIN',
-    'CONTENT-LENGTH'
+    'CONTENT-LENGTH', 'CONNECTION'
 ];
+
+export const proxy_salt = () => config.proxy_salt;
 
 export const source_domain = () => config.source_domain;
 

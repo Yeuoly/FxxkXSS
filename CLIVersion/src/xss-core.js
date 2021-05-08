@@ -4,10 +4,9 @@ import { addNewDefaultLog } from './utils/index.js';
 import FxxkXSSocket from './class/FxxkXSSocket.js';
 
 export const sockets = [];
-export const socket = new WebSocketListener(ws_port_local(), (ws, id, req) => {
+new WebSocketListener(ws_port_local(), (ws, id, req) => {
     const fxxkxss_socket = new FxxkXSSocket(id, ws, req);
     sockets.push(fxxkxss_socket);
-    addNewDefaultLog('CORE', `[${new Date().Format('MM-dd hh:mm:ss')}] got a new connection, session id : ${id}`, 'green');
 });
 
 export const applyRunPayloadSync = (server, payload) => {

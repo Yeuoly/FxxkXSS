@@ -1,4 +1,4 @@
-import { getSecureKey, generateNewLog, decrypt, encrypt } from '../utils/index.js';
+import { getSecureKey, generateNewLog, decrypt, encrypt, addNewDefaultLog } from '../utils/index.js';
 import { proxy_domain, proxy_timeout } from '../conf.js';
 
 export default class FxxkXSSocket {
@@ -8,18 +8,19 @@ export default class FxxkXSSocket {
         this.logs = [];
         this.log_hook = [];
         this.ws = ws;
-
+        
         this.key = getSecureKey();
         ws.send(this.key);
-
+        
         this.proxy_domain = `协议.端口.目标域名.s${id}.${proxy_domain()}`;
         this.proxy_list = [];                                                    //流量转发列表
         this.proxy_seq = 0,                                                      //流量转发序号
         this.proxy_server = `s${id}`                                             //转发服务器名
         this.proxy_current_index = 0;
-
+        
         this.remoteAddress = req.socket.remoteAddress;
         this.remoteUrl = req.headers.origin;
+        addNewDefaultLog('CORE', `[${new Date().Format('MM-dd hh:mm:ss')}] got a new connection from ${this.remoteUrl}, session id : ${id}`, 'green');
         //启动监听
         ws.on('message', async message => {
             //先解密
@@ -27,7 +28,7 @@ export default class FxxkXSSocket {
                 message = JSON.parse(decrypt(message, this.key));
                 //普通消息直接转发到渲染进程里去，同步消息则处理同步消息队列
                 if(message['type'] === 'normal'){
-                    this.addLog(generateNewLog('XSS', message['data'], 'white'));
+                    this.addLog(generateNewLog('XSS', message['data'], 'green'));
                 }else if(message['type'] === 'async'){
                     /**
                      * 这里强调一下数据结构，对于同步消息，message['data']是一个JSON，结构为 { index : number, text : string, fin : bool }
@@ -57,11 +58,14 @@ export default class FxxkXSSocket {
                 }
             }catch(e){
                 //有可能出现消息发到一半密钥更新了的情况，这个时候会解密错误，我已经给出了 60 ~ 316秒的时间用于消息传输，如果出问题的话最好使用分块传输
-                this.addLog(generateNewLog('DECRYPT', 'decrypt error', 'red'));
+                this.addLog(generateNewLog('DECRYPT', 'decrypt error' + e, 'red'));
             }
         });
         ws.on('close', () => {
             this.isAlive = false;
+            const date = new Date().Format('MM-dd hh:mm:ss');
+            addNewDefaultLog('CORE', `[${date}] lost a connection from ${this.remoteUrl}`, 'red');
+            this.addLog(generateNewLog('XSS', `[${date}] lost connection`, 'red'));
         });
     }
 
@@ -124,22 +128,23 @@ export default class FxxkXSSocket {
                     type : 'command',
                     data : payload(seq)
                 }), this.key));
+                const self = this;
                 const proxy = {
                     response : '',
                     seq : seq,
                     callback(){
                         resolve(proxy.response);
                         clearTimeout(proxy.timer);
-                        for(const j in this.proxy_list){
-                            if(this.proxy_list[j].seq === seq){
-                                this.proxy_list.splice(j, 1);
+                        for(const j in self.proxy_list){
+                            if(self.proxy_list[j].seq === seq){
+                                self.proxy_list.splice(j, 1);
                                 break;
                             }
                         }
                         //执行完当前代理后启动下一个代理请求，如果不存在下一个了，那就说明处理完了
-                        this.proxy_current_index++;
-                        if(this.proxy_list[this.proxy_current_index]){
-                            this.proxy_list[this.proxy_current_index]();
+                        self.proxy_current_index++;
+                        if(self.proxy_list[self.proxy_current_index]){
+                            self.proxy_list[self.proxy_current_index]();
                         }
                     },
                     //处理超时，超时后先回应promise，然后删掉这个proxy

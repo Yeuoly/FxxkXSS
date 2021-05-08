@@ -6,6 +6,7 @@ import http from 'http';
 import https from 'https';
 import url from 'url';
 import { readFileSync } from 'fs';
+import { proxy_token } from './conf';
 
 http.globalAgent.maxSockets = Infinity;
 
@@ -56,6 +57,11 @@ setTimeout(() => {
 
 //转发服务器
 http.createServer((req, res) => {
+    //认证一下权限，如果即不是本地请求又没有token，那就说明是个坏家伙，拒绝代理请求
+    if(!req.socket.remoteAddress.includes('127.0.0.1') && !req.url.includes(`fxxkxss_token=${proxy_token}`)){
+        res.end('Unauthorized');
+        return;
+    }
     const databuff = [];
     req.on('data', buf => {
         databuff.push(buf);
@@ -107,4 +113,5 @@ http.createServer((req, res) => {
 
 setTimeout(() => {
     addNewDefaultLog('CORE', `proxy server has started on local port : ${proxy_port_local()}`, 'green');
+    addNewDefaultLog('PROXY', `For remote proxy request, please append "fxxkxss_token=${proxy_token}" to url\nif it's a website, please append fxxkxss_proxy=true to url`, 'green');
 });

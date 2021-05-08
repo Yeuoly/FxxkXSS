@@ -38,12 +38,12 @@ export const directives = [{
                     case 'ssh:': return 22;
                 }
             })();
-            const proxy_url = `代理url为：${url.protocol.substr(0, url.protocol.length - 1)}.${port}.` + 
-                `${url.hostname}.${session.server_name}.${proxy_domain()}:${proxy_port_local()}` + 
+            const proxy_url = `proxy url ：${url.protocol.substr(0, url.protocol.length - 1)}.${port}.` + 
+                `${url.hostname}.${session.proxy_server}.${proxy_domain()}:${proxy_port_local()}` + 
                 `${url.pathname === '/' ? '' : url.pathname}/${url.search}`;
-            session.addNewLog(generateNewLog('PROXY', proxy_url, 'white'));
+            session.addLog(generateNewLog('PROXY', proxy_url, 'white'));
         }catch(e){
-            session.addNewLog(generateNewLog('PROXY', e, 'white'));
+            session.addLog(generateNewLog('PROXY', e, 'white'));
         }
     }
 }];
