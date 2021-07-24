@@ -1,6 +1,5 @@
 import WebSocketListener from './listener-socket.js';
 import { ws_port_local, exclude_headers } from './conf.js';
-import { addNewDefaultLog } from './utils/index.js';
 import FxxkXSSocket from './class/FxxkXSSocket.js';
 
 export const sockets = [];

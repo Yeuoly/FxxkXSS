@@ -1,4 +1,4 @@
-import { addNewDefaultLog, getline, default_logs, generateNewLog } from './utils/index.js';
+import { addNewDefaultLog, getline, default_logs, generateNewLog, addDefaultLogHook, removeDefaultLogHook } from './utils/index.js';
 import { directives } from './payloads';
 
 import process from 'process';
@@ -6,6 +6,10 @@ import process from 'process';
 import { sockets } from './xss-core';
 //开启http监听
 import './http-server';
+
+const logger = str => {
+    console.log(str);
+}
 
 const directives_host = [{
     directive : '.help',
@@ -57,14 +61,13 @@ const directives_host = [{
 }];
 
 const startSessionConsole = id => new Promise(async resolve => {
+    //取消主页面消息事件
+    removeDefaultLogHook(logger);
     //获取fxxkxss实例
     const session = sockets[id];
     //定义消息事件
-    const listener = str => {
-        console.log(str);
-    }
     //挂载消息事件
-    session.addLogHook(listener);
+    session.addLogHook(logger);
     //清屏
     console.clear();
     //打印最多十条历史记录
@@ -98,13 +101,15 @@ const startSessionConsole = id => new Promise(async resolve => {
         }
     }
     //取消挂载
-    session.removeLogHook(listener);
+    session.removeLogHook(logger);
     //清屏
     console.clear();
     //打印原来的log
     default_logs.reverse().slice(0, 10).reverse().forEach(e => {
         console.log(e);
     });
+    //挂载主页面log
+    addDefaultLogHook(logger);
     resolve();
 });
 
@@ -113,6 +118,9 @@ const startSessionConsole = id => new Promise(async resolve => {
     console.log('Welcome to FxxkXSS console, this is designed for cli user, wish you enjoy it ~ ');
     console.log('/**\n * Author: Yeuoly\n * Group: Day1\n * Github: https://github.com/Yeuoly\n */');
     console.log('input .help for guide');
+
+    //挂载主log事件
+    addDefaultLogHook(logger);
 
     setTimeout(async () => {
         while(true){

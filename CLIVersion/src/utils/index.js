@@ -342,6 +342,21 @@ export const getline = ask => new Promise(async resolve => {
 /** log工具函数 */
 
 export const default_logs = [];
+const default_log_hooks = [];
+
+
+export const addDefaultLogHook = f => {
+    typeof f === 'function' && default_log_hooks.push(f);
+}
+
+export const removeDefaultLogHook = f => {
+    for(const i in default_log_hooks){
+        if(default_log_hooks[i] === f){
+            default_log_hooks.splice(i, 1);
+            return;
+        }
+    }
+}
 
 const styles = {
     'bold'          : ['\x1B[1m',  '\x1B[22m'],
@@ -385,7 +400,7 @@ export const generateNewLog = (block, msg, color) => {
 export const addNewDefaultLog = (block, msg, color) => {
     const str = generateNewLog(block, msg, color);
     default_logs.push(str);
-    console.log(str);
+    default_log_hooks.forEach(f => f(str));
 }
 
 /** 随机js字符串格式生成 */
